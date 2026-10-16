@@ -19,6 +19,10 @@ spec:
             - load
             - -c=40
             - -qps=0
+            # New connection per request, so pods added by the HPA get traffic
+            # too. With keep-alive, kube-proxy pins every connection to the pods
+            # that existed when the test started.
+            - -keepalive=false
             - -t=4m
             - http://respawnhub-backend:8000/api/floor
           resources:
