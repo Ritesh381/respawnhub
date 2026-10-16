@@ -26,7 +26,7 @@ env:
 jobs:
   test:
     name: Test and lint
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
@@ -59,8 +59,8 @@ jobs:
         run: npm ci --no-audit --no-fund && npm run build
 
   checks:
-    name: Chart and secret checks
-    runs-on: ubuntu-latest
+    name: Helm, Terraform and secret checks
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
@@ -70,6 +70,15 @@ jobs:
         run: |
           helm lint helm/respawnhub -f helm/respawnhub/values-kind.yaml
           helm template respawnhub helm/respawnhub -f helm/respawnhub/values-eks.yaml > /dev/null
+
+      - uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e # v4.0.1
+
+      - name: Check Terraform formatting and validity
+        working-directory: terraform
+        run: |
+          terraform fmt -check -recursive
+          terraform init -backend=false -input=false
+          terraform validate
 
       - name: Scan the repository for committed secrets
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
@@ -82,7 +91,7 @@ jobs:
   images:
     name: Build, scan and push (${{ matrix.component }})
     needs: [test, checks]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
       packages: write
@@ -143,7 +152,7 @@ jobs:
     name: Update the deployed version (GitOps)
     needs: images
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: write
     steps:
