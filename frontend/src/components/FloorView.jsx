@@ -165,7 +165,7 @@ export default function FloorView({ floor, stats, error, updatedAt, onBook }) {
   const head = (meta) => (
     <div className="view-head">
       <div className="view-heading">
-        <h1 className="view-title">Floor</h1>
+        <h1 className="view-title">Floor Cafe</h1>
         <p className="view-sub">{meta}</p>
       </div>
       {floor && (
