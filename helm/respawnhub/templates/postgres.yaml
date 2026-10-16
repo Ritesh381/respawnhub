@@ -42,7 +42,9 @@ spec:
   template:
     metadata:
       labels:
-        {{- include "respawnhub.componentLabels" $sel | nindent 8 }}
+        # Only stable labels here: anything that changes per release (like the
+        # app version) would restart the database on every deploy.
+        {{- include "respawnhub.selector" $sel | nindent 8 }}
     spec:
       containers:
         - name: postgres
