@@ -27,3 +27,7 @@ def test_metrics_expose_booking_counters(client, make_station, book):
     assert "respawnhub_booking_conflicts_total" in text
     assert "respawnhub_stations_live" in text
     assert "http_requests_total" in text
+
+
+def test_meta_reports_running_build(client):
+    assert client.get("/api/meta").json() == {"version": "dev", "cafe_timezone": "Asia/Kolkata"}

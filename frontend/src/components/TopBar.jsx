@@ -1,5 +1,7 @@
+import { useEffect, useState } from 'react';
 import { LogoMark } from './Icon.jsx';
 import { useNow } from '../useNow.js';
+import { getMeta } from '../api.js';
 import { cafeToday, formatClock, formatDayLabel } from '../time.js';
 
 export const TABS = [
@@ -8,15 +10,30 @@ export const TABS = [
   { id: 'stations', label: 'Stations' },
 ];
 
+// Short build id of the backend that answered, so a deploy is easy to confirm.
+function useBuild() {
+  const [build, setBuild] = useState('');
+  useEffect(() => {
+    getMeta()
+      .then((meta) => setBuild(meta.version))
+      .catch(() => {});
+  }, []);
+  return build;
+}
+
 function Clock() {
   const now = useNow(1000);
+  const build = useBuild();
   return (
     <div className="clock">
       <span className="sr-only">Cafe time </span>
       <time className="clock-time" dateTime={now.toISOString()}>
         {formatClock(now)}
       </time>
-      <span className="clock-day">{formatDayLabel(cafeToday(now))} IST</span>
+      <span className="clock-day">
+        {formatDayLabel(cafeToday(now))} IST
+        {build && <span className="clock-build"> · build {build}</span>}
+      </span>
     </div>
   );
 }

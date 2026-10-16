@@ -89,6 +89,7 @@ async function request(path, { method = 'GET', body } = {}) {
 
 export const getFloor = () => request('/floor');
 export const getStats = () => request('/stats');
+export const getMeta = () => request('/meta');
 
 export const listStations = (params) => request(`/stations${toQuery(params)}`);
 export const createStation = (data) => request('/stations', { method: 'POST', body: data });

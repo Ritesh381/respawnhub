@@ -29,6 +29,12 @@ def root():
     return {"service": settings.app_name, "version": settings.app_version, "docs": "/docs"}
 
 
+@app.get("/api/meta", tags=["service"])
+def meta():
+    """Which build is running. The UI shows this so a deploy is easy to spot."""
+    return {"version": settings.app_version, "cafe_timezone": settings.cafe_tz}
+
+
 @app.get("/health", tags=["service"])
 def health():
     """Liveness: the process is up. Does not touch the database."""

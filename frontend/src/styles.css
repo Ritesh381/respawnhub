@@ -232,6 +232,12 @@ textarea {
   color: var(--text-dim);
 }
 
+.clock-build {
+  color: var(--cyan);
+  text-transform: none;
+  font-family: var(--font-mono, ui-monospace, monospace);
+}
+
 /* Server down banner */
 
 .offline {
