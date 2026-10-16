@@ -2,7 +2,7 @@ image:
   registry: ghcr.io/ritesh381
   # Commit SHA of the images to run. The CI pipeline updates this line after
   # it has tested, scanned and pushed a new build.
-  tag: "0b502fd7b13b2d70384c891d5bf1e41e6d561acc"
+  tag: "11474e2f8fc60a985269f4d51bb2dd5351ed7d8b"
   pullPolicy: IfNotPresent
 imagePullSecrets: []
 backend:
