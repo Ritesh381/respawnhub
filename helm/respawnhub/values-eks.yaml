@@ -1,0 +1,8 @@
+# AWS EKS. Same secret as kind, created before the first sync.
+postgres:
+  existingSecret: respawnhub-db
+  storageClass: gp3
+
+ingress:
+  # Reach the app on the load balancer hostname AWS gives ingress-nginx.
+  host: ""

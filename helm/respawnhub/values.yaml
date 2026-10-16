@@ -1,0 +1,57 @@
+image:
+  registry: ghcr.io/ritesh381
+  # Commit SHA of the images to run. The CI pipeline updates this line after
+  # it has tested, scanned and pushed a new build.
+  tag: "pending"
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+
+backend:
+  replicas: 2
+  cafeTimezone: Asia/Kolkata
+  resources:
+    requests: { cpu: 100m, memory: 128Mi }
+    limits: { cpu: 500m, memory: 384Mi }
+
+frontend:
+  replicas: 2
+  resources:
+    requests: { cpu: 25m, memory: 32Mi }
+    limits: { cpu: 200m, memory: 128Mi }
+
+postgres:
+  image: postgres:16-alpine
+  database: respawnhub
+  username: respawnhub
+  # Name of an existing Secret with a "password" key. If empty, the chart
+  # creates one from postgres.password (which must then be set).
+  existingSecret: ""
+  password: ""
+  storage: 2Gi
+  storageClass: ""
+  resources:
+    requests: { cpu: 100m, memory: 256Mi }
+    limits: { cpu: 500m, memory: 512Mi }
+
+ingress:
+  enabled: true
+  className: nginx
+  # Leave empty to answer on any hostname (handy behind a cloud load balancer).
+  host: respawnhub.localhost
+
+hpa:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 6
+  cpuTarget: 60
+
+monitoring:
+  serviceMonitor:
+    enabled: true
+    interval: 15s
+    # Must match the label selector of the Prometheus that should scrape us.
+    labels:
+      release: monitoring
+  grafanaDashboard:
+    enabled: true

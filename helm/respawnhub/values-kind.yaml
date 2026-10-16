@@ -1,0 +1,8 @@
+# Local kind cluster. Create the DB secret first:
+#   kubectl -n respawnhub create secret generic respawnhub-db --from-literal=password=...
+postgres:
+  existingSecret: respawnhub-db
+  storageClass: standard
+
+ingress:
+  host: respawnhub.localhost

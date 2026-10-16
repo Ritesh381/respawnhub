@@ -1,0 +1,9 @@
+RespawnHub {{ .Values.image.tag | trunc 7 }} is deployed to namespace {{ .Release.Namespace }}.
+
+{{- if .Values.ingress.enabled }}
+Open: http://{{ .Values.ingress.host | default "<load balancer hostname>" }}/
+API docs: http://{{ .Values.ingress.host | default "<load balancer hostname>" }}/docs
+{{- end }}
+
+Check it:
+  kubectl get pods,svc,ingress,hpa -n {{ .Release.Namespace }}
