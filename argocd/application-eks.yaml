@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: respawnhub
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/Ritesh381/respawnhub.git
+    targetRevision: main
+    path: helm/respawnhub
+    helm:
+      releaseName: respawnhub
+      valueFiles:
+        - values.yaml
+        - values-eks.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: respawnhub
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

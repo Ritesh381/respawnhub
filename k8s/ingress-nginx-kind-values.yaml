@@ -1,0 +1,15 @@
+# ingress-nginx on kind: listen on the control plane node's ports 80/443,
+# which kind-config.yaml maps to this machine.
+controller:
+  hostPort:
+    enabled: true
+  service:
+    type: NodePort
+  nodeSelector:
+    ingress-ready: "true"
+  tolerations:
+    - key: node-role.kubernetes.io/control-plane
+      operator: Equal
+      effect: NoSchedule
+  ingressClassResource:
+    default: true

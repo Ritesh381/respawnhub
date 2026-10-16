@@ -1,0 +1,13 @@
+# Small Argo CD for a single cluster.
+configs:
+  params:
+    server.insecure: true
+  cm:
+    # Check Git for changes every minute instead of every three.
+    timeout.reconciliation: 60s
+dex:
+  enabled: false
+notifications:
+  enabled: false
+applicationSet:
+  enabled: false

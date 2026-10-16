@@ -1,0 +1,26 @@
+# Sends steady traffic at the backend so the HPA has a reason to scale.
+#   kubectl apply -f k8s/load-test-job.yaml
+#   kubectl get hpa -n respawnhub -w
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: load-test
+  namespace: respawnhub
+spec:
+  backoffLimit: 0
+  ttlSecondsAfterFinished: 600
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: fortio
+          image: fortio/fortio:1.69.4
+          args:
+            - load
+            - -c=40
+            - -qps=0
+            - -t=4m
+            - http://respawnhub-backend:8000/api/floor
+          resources:
+            requests: { cpu: 100m, memory: 64Mi }
+            limits: { cpu: "1", memory: 256Mi }
