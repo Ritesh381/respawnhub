@@ -28,3 +28,7 @@ crash.log
 .idea/
 .vscode/
 .DS_Store
+
+# Terraform plan files
+tfplan
+*.tfplan
