@@ -33,7 +33,7 @@ echo "Installing metrics-server"
 metrics_values=()
 [ "$target" = kind ] && metrics_values=(-f monitoring/metrics-server-values.yaml)
 helm upgrade --install metrics-server metrics-server/metrics-server --version 3.14.0 \
-  -n kube-system "${metrics_values[@]}" --wait
+  -n kube-system ${metrics_values[@]+"${metrics_values[@]}"} --wait
 
 echo "Installing Prometheus and Grafana"
 kubectl create namespace monitoring --dry-run=client -o yaml | kubectl apply -f -
