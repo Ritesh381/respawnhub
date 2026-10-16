@@ -57,6 +57,14 @@ module "eks" {
   endpoint_public_access                   = true
   enable_cluster_creator_admin_permissions = true
 
+  # Short-lived demo cluster: skip the customer managed KMS key (it lingers
+  # for at least 7 days after destroy) and control plane log shipping, so
+  # terraform destroy leaves nothing behind.
+  create_kms_key              = false
+  encryption_config           = null
+  create_cloudwatch_log_group = false
+  enabled_log_types           = []
+
   addons = {
     vpc-cni = {
       before_compute = true
