@@ -1,0 +1,17 @@
+# Scenario 2: a Service that looks fine but sends traffic nowhere.
+# Apply, then work out why requests to it fail.
+apiVersion: v1
+kind: Service
+metadata:
+  name: lab-backend-typo
+  namespace: respawnhub
+  labels:
+    lab: troubleshooting
+spec:
+  selector:
+    app.kubernetes.io/name: respawnhub
+    app.kubernetes.io/component: api
+  ports:
+    - name: http
+      port: 8000
+      targetPort: 8000

@@ -1,0 +1,34 @@
+# Scenario 1: a release points at an image tag that was never pushed.
+# Apply, then work out why the pod never starts.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lab-bad-image
+  namespace: respawnhub
+  labels:
+    lab: troubleshooting
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: lab-bad-image
+  template:
+    metadata:
+      labels:
+        app: lab-bad-image
+    spec:
+      containers:
+        - name: backend
+          image: ghcr.io/ritesh381/respawnhub-backend:v9.9.9
+          ports:
+            - containerPort: 8000
+          env:
+            - name: DB_HOST
+              value: respawnhub-postgres
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: respawnhub-db
+                  key: password
+          readinessProbe:
+            httpGet: { path: /ready, port: 8000 }
