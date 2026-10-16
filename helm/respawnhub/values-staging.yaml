@@ -1,0 +1,16 @@
+# Staging copy on the same kind cluster, installed by hand with the Helm CLI
+# (production is deployed by Argo CD). Create its DB secret first:
+#   kubectl -n respawnhub-staging create secret generic respawnhub-db --from-literal=password=...
+postgres:
+  existingSecret: respawnhub-db
+  storageClass: standard
+
+ingress:
+  host: staging.respawnhub.localhost
+
+hpa:
+  enabled: false
+
+monitoring:
+  grafanaDashboard:
+    enabled: false
