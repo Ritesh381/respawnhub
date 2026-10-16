@@ -101,3 +101,9 @@ def test_day_bounds_use_cafe_timezone():
     start, end = day_bounds(date(2026, 10, 20), "Asia/Kolkata")
     assert start == datetime(2026, 10, 19, 18, 30, tzinfo=UTC)
     assert end == datetime(2026, 10, 20, 18, 30, tzinfo=UTC)
+
+
+def test_started_session_can_be_extended_but_not_into_the_past():
+    assert validate_slot(at(7), at(9), NOW, started_ok=True) == 120
+    with pytest.raises(SlotError, match="End time is in the past"):
+        validate_slot(at(7), at(8), NOW, started_ok=True)

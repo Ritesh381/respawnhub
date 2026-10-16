@@ -41,9 +41,9 @@ def to_out(booking: Booking, now: datetime) -> BookingOut:
     )
 
 
-def check_slot(start: datetime, end: datetime, now: datetime) -> int:
+def check_slot(start: datetime, end: datetime, now: datetime, started_ok: bool = False) -> int:
     try:
-        return validate_slot(start, end, now)
+        return validate_slot(start, end, now, started_ok)
     except SlotError as error:
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, str(error)) from error
 
@@ -144,8 +144,14 @@ def update_booking(
     times_changed = start != booking.start_at or end != booking.end_at
     restoring = booking.status == "CANCELLED" and new_status == "BOOKED"
 
+    if restoring and end <= now:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "This booking has already ended")
     if times_changed:
-        booking.amount = price(station.hourly_rate, check_slot(start, end, now))
+        # Moving only the end of a session that has started (an extension)
+        # is fine; a new start time still has to be in the future.
+        same_start = start == booking.start_at
+        minutes = check_slot(start, end, now, started_ok=same_start)
+        booking.amount = price(station.hourly_rate, minutes)
     if new_status == "BOOKED" and (times_changed or restoring):
         ensure_bookable(db, station, start, end, exclude_id=booking.id)
 

@@ -26,8 +26,12 @@ def current_slot_start(now: datetime) -> datetime:
     return now.replace(minute=0 if now.minute < 30 else 30, second=0, microsecond=0)
 
 
-def validate_slot(start: datetime, end: datetime, now: datetime) -> int:
-    """Check a slot against the cafe rules and return its length in minutes."""
+def validate_slot(start: datetime, end: datetime, now: datetime, started_ok: bool = False) -> int:
+    """Check a slot against the cafe rules and return its length in minutes.
+
+    started_ok allows a start in the past (extending a session that is already
+    running); the end must then still be in the future.
+    """
     if start.tzinfo is None or end.tzinfo is None:
         raise SlotError("Times must include a timezone offset")
     start, end = start.astimezone(UTC), end.astimezone(UTC)
@@ -42,7 +46,10 @@ def validate_slot(start: datetime, end: datetime, now: datetime) -> int:
         raise SlotError("Duration must be in 30 minute steps")
     if not MIN_MINUTES <= minutes <= MAX_MINUTES:
         raise SlotError("Duration must be between 30 minutes and 8 hours")
-    if start < current_slot_start(now):
+    if started_ok:
+        if end <= now:
+            raise SlotError("End time is in the past")
+    elif start < current_slot_start(now):
         raise SlotError("Start time is in the past")
     return minutes
 

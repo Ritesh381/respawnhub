@@ -110,3 +110,30 @@ def test_delete_booking(client, make_station, book):
     booking = book(station["id"], iso(9), iso(10)).json()
     assert client.delete(f"/api/bookings/{booking['id']}").status_code == 204
     assert client.get(f"/api/bookings/{booking['id']}").status_code == 404
+
+
+def test_running_session_extension_after_start_is_allowed(client, make_station, book):
+    from datetime import UTC, datetime
+
+    from app.clock import get_now
+
+    station = make_station(rate=120)
+    booking = book(station["id"], iso(8), iso(9)).json()
+    client.app.dependency_overrides[get_now] = lambda: datetime(2026, 10, 20, 8, 40, tzinfo=UTC)
+    response = client.put(f"/api/bookings/{booking['id']}", json={"end_at": iso(10)})
+    assert response.status_code == 200
+    assert response.json()["amount"] == 240
+
+
+def test_finished_booking_cannot_be_restored(client, make_station, book):
+    from datetime import UTC, datetime
+
+    from app.clock import get_now
+
+    station = make_station()
+    booking = book(station["id"], iso(8), iso(9)).json()
+    client.put(f"/api/bookings/{booking['id']}", json={"status": "CANCELLED"})
+    client.app.dependency_overrides[get_now] = lambda: datetime(2026, 10, 20, 9, 30, tzinfo=UTC)
+    response = client.put(f"/api/bookings/{booking['id']}", json={"status": "BOOKED"})
+    assert response.status_code == 422
+    assert "already ended" in response.json()["detail"]
