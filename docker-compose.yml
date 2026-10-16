@@ -1,0 +1,61 @@
+name: respawnhub
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-respawnhub}
+      POSTGRES_USER: ${POSTGRES_USER:-respawnhub}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-respawnhub-local}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+    restart: unless-stopped
+
+  backend:
+    build: ./backend
+    image: respawnhub-backend:local
+    environment:
+      DB_HOST: postgres
+      DB_NAME: ${POSTGRES_DB:-respawnhub}
+      DB_USER: ${POSTGRES_USER:-respawnhub}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-respawnhub-local}
+      APP_VERSION: local
+    depends_on:
+      postgres:
+        # Wait until Postgres accepts connections, not just until the
+        # container has started. Otherwise the first migration can fail.
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/ready')"]
+      interval: 10s
+      timeout: 3s
+      retries: 6
+      start_period: 15s
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    image: respawnhub-frontend:local
+    environment:
+      BACKEND_URL: http://backend:8000
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "3000:8080"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/healthz"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    restart: unless-stopped
+
+volumes:
+  pgdata:
