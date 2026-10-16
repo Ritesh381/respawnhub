@@ -9,7 +9,7 @@
   "version": 1,
   "refresh": "10s",
   "time": {
-    "from": "now-30m",
+    "from": "now-20m",
     "to": "now"
   },
   "templating": {
@@ -231,7 +231,7 @@
             "type": "prometheus",
             "uid": "${datasource}"
           },
-          "expr": "100 * sum(rate(http_requests_total{namespace=\"$namespace\",status=\"5xx\"}[5m])) / clamp_min(sum(rate(http_requests_total{namespace=\"$namespace\"}[5m])), 1e-9)",
+          "expr": "100 * (sum(rate(http_requests_total{namespace=\"$namespace\",status=\"5xx\"}[5m])) or vector(0)) / clamp_min(sum(rate(http_requests_total{namespace=\"$namespace\"}[5m])), 1e-9)",
           "legendFormat": "errors"
         }
       ],
@@ -514,7 +514,7 @@
             "type": "prometheus",
             "uid": "${datasource}"
           },
-          "expr": "sum by (pod) (rate(container_cpu_usage_seconds_total{namespace=\"$namespace\",container=\"backend\"}[2m]))",
+          "expr": "sum by (pod) (rate(container_cpu_usage_seconds_total{namespace=\"$namespace\",container=\"backend\",pod=~\".*-backend-.*\"}[2m]))",
           "legendFormat": "{{pod}}"
         }
       ],
