@@ -1,7 +1,8 @@
 # AWS EKS. Same secret as kind, created before the first sync.
 postgres:
   existingSecret: respawnhub-db
-  storageClass: gp3
+  # Empty uses the cluster default, which the EBS CSI add-on sets to gp3.
+  storageClass: ""
 
 ingress:
   # Reach the app on the load balancer hostname AWS gives ingress-nginx.

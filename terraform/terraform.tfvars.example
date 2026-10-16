@@ -1,0 +1,8 @@
+# Copy to terraform.tfvars and adjust. No credentials go in this file;
+# Terraform reads them from your AWS CLI profile or environment.
+region              = "ap-south-1"
+aws_profile         = "default"
+cluster_name        = "respawnhub-eks"
+kubernetes_version  = "1.36"
+node_instance_types = ["t3.large"]
+node_desired_size   = 2
