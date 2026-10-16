@@ -1,0 +1,8 @@
+# ingress-nginx on EKS: exposed through an AWS Network Load Balancer.
+controller:
+  service:
+    type: LoadBalancer
+    annotations:
+      service.beta.kubernetes.io/aws-load-balancer-type: nlb
+  ingressClassResource:
+    default: true
