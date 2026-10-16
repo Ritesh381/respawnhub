@@ -4,7 +4,11 @@ RespawnHub is a booking app for a gaming cafe. Staff see the whole floor at a gl
 
 ![Floor view](docs/screenshots/07-compose-ui-floor.png)
 
-Demo video (under 3 minutes, from the app to a live deploy): [demo-video.mp4](demo-video.mp4)
+Demo video (under 3 minutes, from the app to a live deploy):
+
+https://github.com/user-attachments/assets/567eae15-d0e0-4a18-8476-38c3893fe036
+
+If the player does not load, download [demo-video.mp4](demo-video.mp4).
 
 ## What it does
 
