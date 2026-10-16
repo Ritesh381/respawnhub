@@ -2,24 +2,20 @@ image:
   registry: ghcr.io/ritesh381
   # Commit SHA of the images to run. The CI pipeline updates this line after
   # it has tested, scanned and pushed a new build.
-  tag: "pending"
+  tag: "2ef9d35a97e6a5172063927fd9419d2bc2745f08"
   pullPolicy: IfNotPresent
-
 imagePullSecrets: []
-
 backend:
   replicas: 2
   cafeTimezone: Asia/Kolkata
   resources:
-    requests: { cpu: 100m, memory: 128Mi }
-    limits: { cpu: 500m, memory: 384Mi }
-
+    requests: {cpu: 100m, memory: 128Mi}
+    limits: {cpu: 500m, memory: 384Mi}
 frontend:
   replicas: 2
   resources:
-    requests: { cpu: 25m, memory: 32Mi }
-    limits: { cpu: 200m, memory: 128Mi }
-
+    requests: {cpu: 25m, memory: 32Mi}
+    limits: {cpu: 200m, memory: 128Mi}
 postgres:
   image: postgres:16-alpine
   database: respawnhub
@@ -31,21 +27,18 @@ postgres:
   storage: 2Gi
   storageClass: ""
   resources:
-    requests: { cpu: 100m, memory: 256Mi }
-    limits: { cpu: 500m, memory: 512Mi }
-
+    requests: {cpu: 100m, memory: 256Mi}
+    limits: {cpu: 500m, memory: 512Mi}
 ingress:
   enabled: true
   className: nginx
   # Leave empty to answer on any hostname (handy behind a cloud load balancer).
   host: respawnhub.localhost
-
 hpa:
   enabled: true
   minReplicas: 2
   maxReplicas: 6
   cpuTarget: 60
-
 monitoring:
   serviceMonitor:
     enabled: true
